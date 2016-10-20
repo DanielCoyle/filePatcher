@@ -6,5 +6,5 @@
 
 
 - Sample site 1: https://store-0nwtg5pp.mybigcommerce.com/
-- Sample site 2: http://billing-intuitsolutions-net.mybigcommerce.com/
-- Sample site 3: http://billing-intuitsolutions-net.mybigcommerce.com/
+- Sample site 2: https://store-kmv4es.mybigcommerce.com
+- Sample site 3: https://store-jx6ewa.mybigcommerce.com
