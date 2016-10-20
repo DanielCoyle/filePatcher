@@ -1,0 +1,47 @@
+%%Panel.HTMLHead%%
+<body class="Homepage">
+<script type="text/javascript" src="%%GLOBAL_TPL_PATH%%/js/jquery.masonry.js"></script>
+<div id="Container">
+	%%Panel.Header%%
+	<div id="Wrapper">
+		%%Banner.TopBanner%%
+		%%Panel.WrapperBanner%%
+		<div class="Content Widest" id="LayoutColumn1" style="margin-top: 20px">
+			%%Panel.HomeSlideShow%%
+			
+            
+			%%Discount.FreeShippingEligibility%%
+			%%Panel.HomeFeaturedProducts%%
+			%%Banner.BottomBanner%%
+		</div>
+		<div class="clear"></div>
+		<div class="NewsletterColumn">
+		%%Panel.SideNewsletterBox%%
+		</div>
+		<div class="clear"></div>
+	</div>
+
+	<script>alert("Hello Wrold!"); </script>
+%%Panel.Footer%%
+	
+</div>
+<script type="text/javascript">
+	$(window).load(function(){
+		//Masonry
+		$("#HomeFeaturedProducts ul").animate({opacity: 1}, 750);
+		$("#HomeFeaturedProducts ul").masonry({
+			itemSelector	: 'li',
+			//columnWidth	: 5,
+			isAnimated: true,
+			animationOptions: {
+			duration: 750,
+			easing: 'linear',
+			queue: false
+		  }
+		});
+	});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+{% extends 'FilePatchBundle:Default:index.html.twig' %}
+{% block body %}
+<div class="jumbotron">
+    <h1>The File Patcher Tool</h1>
+    <div class='row'>
+        <div class='col-md-6' style='text-align:right'>
+            <i class="fa fa-file-code-o" aria-hidden="true"></i>
+            <i class="fa fa-cogs" aria-hidden="true"></i>
+        </div>
+        <div class='col-md-5 homeButtons' style='text-align:left'>
+            <div class='row'><a class='btn btn-primary' href="{{path('patch_new')}}">CREATE A NEW PATCH</a></div>
+      <div class='row'><a class='btn btn-primary' href="{{path('patch_list')}}">ALL PATCHES</a></div>
+            <div class='row'><a class='btn btn-primary' href="{{path('dav_new')}}">NEW WEBDAV CLIENT</a></div>
+            <div class='row'><a class='btn btn-primary' href="{{path('dav_list')}}">WEBDAV CLIENTS</a></div>
+            <div class='row'><a class='btn btn-primary' href="{{ path('patch_history',{'type':'all','id':0})}}">PATCH HISTORY</a></div>
+        </div>
+    </div>
+</div>
+<div class='appDescription'>
+    <h3>App Summary</h3>
+    <p>The file patcher tool is an application used to create new files and modify existing files on one or many sites at a time.
+
+        <h3>How does The File Patcher Tool work?</h3>
+
+    </div>
+
+    <style>
+    .jumbotron{
+        text-align:center;
+        font-size:12em;
+    }
+
+    i.fa.fa-file-code-o {
+        color: #5bc0de;
+    }
+
+    i.fa.fa-cogs {
+        color: #3db42f;
+    }
+
+    .jumbotron>h1{
+        border-bottom:solid 1px gray;
+    }
+
+    .col-md-5.homeButtons>div {
+    line-height: 1;
+    vertical-align: top;
+    font-size: 56px;
+}
+
+    .col-md-5.homeButtons>div>a.btn {
+        width: 100%;
+        font-size:20px;
+    }
+
+    </style>
+    {% endblock %}

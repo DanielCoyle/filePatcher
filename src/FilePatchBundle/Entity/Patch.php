@@ -1,0 +1,246 @@
+<?php
+
+namespace FilePatchBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Patch details
+ *
+ * @ORM\Table(name="patch")
+ * @ORM\Entity(repositoryClass="FilePatchBundle\Repository\PatchRepository")
+ */
+class Patch
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255)
+     */
+    private $description;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="action", type="string", length=255)
+     */
+    private $action;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="existing_content", type="text",nullable=true)
+     */
+    private $existingContent;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="new_content", type="text", nullable=true)
+     */
+    private $newContent;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="file_name", type="string", length=255, nullable=true)
+     */
+    private $fileName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="save_as", type="string", length=255, nullable=true)
+     */
+    private $saveAs;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return Patch
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Patch
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string 
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set action
+     *
+     * @param string $action
+     * @return Patch
+     */
+    public function setAction($action)
+    {
+        $this->action = $action;
+
+        return $this;
+    }
+
+    /**
+     * Get action
+     *
+     * @return string 
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
+
+    /**
+     * Set existingContent
+     *
+     * @param string $existingContent
+     * @return Patch
+     */
+    public function setExistingContent($existingContent)
+    {
+        $this->existingContent = $existingContent;
+
+        return $this;
+    }
+
+    /**
+     * Get existingContent
+     *
+     * @return string 
+     */
+    public function getExistingContent()
+    {
+        return $this->existingContent;
+    }
+
+    /**
+     * Set newContent
+     *
+     * @param string $newContent
+     * @return Patch
+     */
+    public function setNewContent($newContent)
+    {
+        $this->newContent = $newContent;
+
+        return $this;
+    }
+
+    /**
+     * Get newContent
+     *
+     * @return string 
+     */
+    public function getNewContent()
+    {
+        return $this->newContent;
+    }
+
+    /**
+     * Set fileName
+     *
+     * @param string $fileName
+     * @return Patch
+     */
+    public function setFileName($fileName)
+    {
+        $this->fileName = $fileName;
+
+        return $this;
+    }
+
+    /**
+     * Get fileName
+     *
+     * @return string 
+     */
+    public function getFileName()
+    {
+        return $this->fileName;
+    }
+
+    /**
+     * Set saveAs
+     *
+     * @param string $saveAs
+     * @return Patch
+     */
+    public function setSaveAs($saveAs)
+    {
+        $this->saveAs = $saveAs;
+
+        return $this;
+    }
+
+    /**
+     * Get saveAs
+     *
+     * @return string 
+     */
+    public function getSaveAs()
+    {
+        return $this->saveAs;
+    }
+}

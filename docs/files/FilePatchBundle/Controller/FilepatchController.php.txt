@@ -1,0 +1,435 @@
+<?php
+/**
+ * File Patch Controller
+ */
+namespace FilePatchBundle\Controller;
+use FilePatchBundle\Entity\Patch;
+use FilePatchBundle\Entity\Dav;
+use FilePatchBundle\Entity\History;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+/**
+ * CRUD, execute and revert opperations for the file patch system.
+ */
+class FilepatchController extends Controller
+{
+   /**
+    *   List all existing file patches.
+     * @Route("/filepatcher/", name="patch_list")
+     */
+    public function listAction(){
+        $patches = $this->getDoctrine()
+                        ->getRepository("FilePatchBundle:Patch")
+                        ->findAll();
+        return $this->render('FilePatchBundle:Default:list.html.twig', 
+            array('patches'=> $patches)
+            );
+    } 
+
+   /**
+     *  Create a new file patch.
+     * @Route("/filepatcher/new", name="patch_new")
+     */
+    public function newAction(Request $request){
+        $patch = new Patch;
+        $form = $this->createFormBuilder($patch)
+                    ->add("name", TextType::class,array("attr"=> array("class" => "form-control")))
+                    ->add("description", TextareaType::class,array("attr"=> array("class" => "form-control"), "required" => false))
+                    ->add("action", ChoiceType::class,array("choices"=> 
+                        array(
+                            "createNewFile"  => "create new file",
+                            "replaceString" => "REPLACE string IN a file",
+                            "insertBefore" => "INSERT content BEFORE string IN file",
+                            "insertAfter" => "INSERT content AFTER string IN file",
+                            "append" => "APPEND content to file",
+                            "prepend" => "PREPEND content to file"
+                                ),
+                         "attr" => array("class" => "form-control")))
+                    ->add("file_name", TextType::class,array("attr"=> array("class" => "form-control"), "required" => false))
+                    ->add("save_as", TextType::class,array("attr"=> array("class" => "form-control"), "required" => false))
+                    ->add("existing_content", TextareaType::class,array("attr"=> array("class" => "form-control", "rows" => 10), "required" => false))
+                    ->add("new_content", TextareaType::class,array("attr"=> array("class" => "form-control", "rows" => 10), "required" => false))
+                    ->add("submit", SubmitType::class,array("label" => 'Submit', "attr"=> array("class" => "btn btn-primary")))
+                    ->getForm();
+                    
+                    $form->handleRequest($request);
+                    if($form->isSubmitted() && $form->isValid()){
+                        //Get Data
+                        $name = $form['name']->getData();
+                        $description = $form['description']->getData();
+                        $action = $form['action']->getData();
+                        $file_name = $form['file_name']->getData();
+                        $existing_content = $form['existing_content']->getData();
+                        $new_content = $form['new_content']->getData();
+                        $save_as = $form['save_as']->getData();
+
+                        $patch->setName($name);
+                        $patch->setDescription($description);
+                        $patch->setAction($action);
+                        $patch->setFileName($file_name);
+                        $patch->setNewContent($new_content);
+                        $patch->setExistingContent($existing_content);
+                        $patch->setSaveAs($save_as);
+
+                        $em = $this->getDoctrine()->getManager();
+                        $em->persist($patch);
+                        $em->flush();
+
+                        $this->addFlash(
+                            'notice',
+                            "New Patch Added"
+                            );
+                        return $this->redirectToRoute("patch_list");
+
+                    }
+
+                    return $this->render('FilePatchBundle:Default:new.html.twig', array("form"=> $form->createView()));
+    } 
+
+    /**
+     * Edit an existing file patch
+     * @param   $id The Patch ID.
+     * @Route("/filepatcher/edit/{id}", name="patch_edit")
+     */
+    public function editAction(Request $request ,$id){
+        $patch = $this->getDoctrine()
+                        ->getRepository("FilePatchBundle:Patch")
+                        ->find($id);
+
+        $form = $this->createFormBuilder($patch)
+                    ->add("name", TextType::class,array("attr"=> array("class" => "form-control")))
+                    ->add("description", TextareaType::class,array("attr"=> array("class" => "form-control"), "required" => false))
+                    ->add("action", ChoiceType::class,array("choices"=> 
+                        array(
+                            ""  => "",
+                            "createNewFile"  => "create new file",
+                            "replaceString" => "REPLACE string IN a file",
+                            "insertBefore" => "INSERT content BEFORE string IN file",
+                            "insertAfter" => "INSERT content AFTER string IN file",
+                            "append" => "APPEND content to file",
+                            "prepend" => "PREPEND content to file"
+                                ),
+                         "attr" => array("class" => "form-control")))
+                    ->add("file_name", TextType::class,array("attr"=> array("class" => "form-control"), "required" => false))
+                    ->add("save_as", TextType::class,array("attr"=> array("class" => "form-control"), "required" => false))
+                    ->add("existing_content", TextareaType::class,array("attr"=> array("class" => "form-control", "rows" => 10), "required" => false))
+                    ->add("new_content", TextareaType::class,array("attr"=> array("class" => "form-control", "rows" => 10), "required" => false))
+                    ->add("submit", SubmitType::class,array("label" => 'Submit', "attr"=> array("class" => "btn btn-primary")))
+                    ->getForm();
+                    
+                    $form->handleRequest($request);
+                    if($form->isSubmitted() && $form->isValid()){
+                        //Get Data
+                        $name = $form['name']->getData();
+                        $description = $form['description']->getData();
+                        $action = $form['action']->getData();
+                        $file_name = $form['file_name']->getData();
+                        $existing_content = $form['existing_content']->getData();
+                        $new_content = $form['new_content']->getData();
+                        $save_as = $form['save_as']->getData();
+
+                        $em = $this->getDoctrine()->getManager();
+                        $patch = $em->getRepository("FilePatchBundle:Patch")->find($id);
+                        $patch->setName($name);
+                        $patch->setDescription($description);
+                        $patch->setAction($action);
+                        $patch->setFileName($file_name);
+                        $patch->setNewContent($new_content);
+                        $patch->setExistingContent($existing_content);
+                        $patch->setSaveAs($save_as);
+                        $em->flush();
+                        $this->addFlash(
+                            'notice',
+                            "Patch Updated"
+                            );
+                        return $this->redirectToRoute("patch_list");
+                    }
+
+        return $this->render('FilePatchBundle:Default:edit.html.twig', array("patch" => $patch, "form"=> $form->createView()));
+    } 
+
+   /**
+    * Delete an existing file patch
+     * @param   $id The Patch ID.
+     * @Route("/filepatcher/delete/{id}", name="patch_delete")
+     */
+    public function deleteAction($id){
+        $em = $this->getDoctrine()->getManager();
+        $patch = $em->getRepository("FilePatchBundle:Patch")->find($id);
+        $em->remove($patch);
+        $em->flush();
+        $this->addFlash("notice","Patch Removed");
+        return $this->redirectToRoute("patch_list");
+    }
+
+    /**
+     * Run a patch. In the view this routes to, you can choose which stores (webDav clients) should have this patch ran on.
+     * @Route("/filepatcher/execute/{id}", name="patch_execute")
+     */
+    public function executeAction(Request $request,  $id){
+         $davs = $this->getDoctrine()
+                        ->getRepository("FilePatchBundle:Dav")
+                        ->findAll(array("store" => "ASC"));
+        $davArray = [];
+                       foreach ($davs as $key => $value) {
+                           $davArray[$value->getId()] = $value->getStore();
+                       }
+        asort($davArray);
+        $dav = new Dav;
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->createFormBuilder($dav)
+                    ->add("store", ChoiceType::class,array(
+                        "choices"=> $davArray,
+                         "multiple" =>true,
+                         "expanded" => true,
+                         "label" => "Which stores would you like to apply this to patch to?"))
+                    ->add("submit", SubmitType::class,array("label" => 'EXECUTE PATCH', "attr"=> array("class" => "col-md-12 btn btn-success executePatch")))
+                    ->getForm();
+
+                    $patch = $this->getDoctrine()
+                    ->getRepository("FilePatchBundle:Patch")
+                    ->find($id);
+
+                    $action = $patch->getAction();
+                    $form->handleRequest($request);
+                    if($form->isSubmitted() && $form->isValid()){
+                        $stores = $form->getData()->getStore();
+                        $Davs = $em->getRepository("FilePatchBundle:Dav")->findBy(array('id' => $stores));
+                        foreach ($Davs as $Dav) {
+                            $davCred['id'] = $Dav->getId();
+                            $davCred['davUrl'] = $Dav->getDavUrl();
+                            $davCred['userName'] = $Dav->getUserName();
+                            $davCred['password'] = $Dav->getPassword();
+                            if(!empty($patch->getSaveAs())){
+                                $saveAs = $patch->getSaveAs();
+                            }
+                            else{
+                                $saveAs = $patch->getFileName();
+                            }
+                            $result = $dav->davDownload($davCred, $patch->getFileName(), $saveAs);
+                            $resultFile = $dav->downloadDirectory.$saveAs.".backUp.".$davCred['id'];
+
+                            if($action == "createNewFile"){
+                                    $newContent = $patch->getNewContent();
+                                    $ogContent = "";
+                            }
+                            elseif(file_exists($resultFile)){
+                                $ogContent =  file_get_contents($resultFile);
+                                    if($action == "insertAfter"){
+                                        if(strpos($ogContent,$patch->getExistingContent()) !== false){
+                                        $newContent = str_replace($patch->getExistingContent(), $patch->getExistingContent()."\n".$patch->getNewContent(), $ogContent);
+                                            $uploadCriteria = true;    
+                                         
+                                         }
+                                         else{
+                                            $newContent = "Existing Content Not Found";
+                                            $uploadCriteria = false;    
+                                         }
+                                    }
+                                    elseif($action == "insertBefore"){
+                                        if(strpos($ogContent,$patch->getExistingContent()) !== false){
+                                        $newContent = str_replace($patch->getExistingContent(), $patch->getNewContent()."\n".$patch->getExistingContent(), $ogContent);
+                                        $uploadCriteria = true;    
+                                        
+                                        }
+                                        else{
+                                            $newContent = "Existing Content Not Found";
+                                            $uploadCriteria = false;    
+                                        }
+                                    }
+                                    elseif($action == "replaceString"){
+                                        if(strpos($ogContent,$patch->getExistingContent()) !== false){
+                                        $newContent = str_replace($patch->getExistingContent(), $patch->getNewContent(), $ogContent);
+                                            $uploadCriteria = true;    
+                                        }
+                                        else{
+                                            $newContent = "Existing Content Not Found";
+                                            $uploadCriteria = false;    
+                                        }
+                                    }
+                                    elseif($action == "append"){
+                                        $newContent = $ogContent."\n".$patch->getNewContent();
+                                            $uploadCriteria = true;    
+
+                                    }
+                                   elseif($action == "prepend"){
+                                        $newContent = $patch->getNewContent()."\n".$ogContent;
+                                            $uploadCriteria = true;    
+                                    }
+                                }
+                                $f = fopen($dav->downloadDirectory.$saveAs,"w");
+                                fwrite($f, $newContent);
+                                fclose($f);
+                                if(($result['success'] == 1) && $uploadCriteria === true || $action == "createNewFile" ){
+                                   $upResult = $dav->davUpload($davCred, $saveAs);
+                                   if(empty($upResult)){
+                                    $success = true;
+                                   }
+                                   else{
+                                    $success = false;
+                                   }
+                                }
+                                else{
+                                    $success = false;
+                                }
+
+
+                                $history = new History;
+                                $history->setDavId($davCred['id']);
+                                $history->setPatchId($id);
+                                $history->setOriginalContent($ogContent);
+                                $now = new\DateTime('now');
+                                $history->setDateExecuted($now);
+                                $history->setNewContent($newContent);
+                                $history->setSaveAsName($saveAs);
+                                $history->setOriginalFileName($patch->getFileName());
+                                $history->setAction($patch->getAction());
+                                $history->setLastRun(1);
+                                $history->setSuccess($success);
+                                $em = $this->getDoctrine()->getManager();
+                                $em->persist($history);
+                                $em->flush();
+
+                        }
+                         $this->addFlash(
+                            'notice',
+                            "Patch as been executed."
+                            );
+                        return $this->redirectToRoute("patch_result");
+
+                    }
+
+                $History = $em->getRepository("FilePatchBundle:History")->findBy(array('patchId' => $id),array("dateExecuted" => "DESC"));
+                foreach ($History as $key => $value) {
+                    $client = $em->getRepository("FilePatchBundle:Dav")->find($value->getDavId());
+                   $History[$key]->store =  $client->getStore();
+                }
+
+               return $this->render('FilePatchBundle:Default:execute.html.twig', array("patch" => $patch,"history" =>$History, "form"=> $form->createView()));
+    }
+
+
+
+          /**
+           * Show the results of the patch that was just executed.
+             * @Route("/filepatcher/results", name="patch_result")
+             */
+            public function resultAction(){
+                $history = $this->getDoctrine()
+                                ->getRepository("FilePatchBundle:History")
+                                ->findBy(array('lastRun' => '1'));
+                foreach ($history as $key => $event) {
+                        $em = $this->getDoctrine()->getManager();
+                    $update = $em->getRepository('FilePatchBundle:History')->find($event->getId());
+                    $update->setLastRun(0);
+                     $em->flush();
+                    $history[$key]->store = $em->getRepository('FilePatchBundle:Dav')->findOneById($event->getDavId())->getStore();
+                    $content = $event->getOriginalContent()."\n";
+                    if(strpos($content, "Sabre\DAV\Exception") <= 0){
+                        $history[$key]->setSuccess(true);
+                    }
+                    else{
+                        $history[$key]->setSuccess(false);;
+                        $content = explode("<s:message>",$content);
+                        $content = end($content);
+                        $content = strip_tags($content);
+                        if(trim($content) == "Incorrect username"){
+                            $content .= " or password.";
+                        }
+                        $history[$key]->message = $content;
+                    }
+                }
+
+                return $this->render('FilePatchBundle:Default:result.html.twig', array('history'=> $history) ); 
+            }
+
+   /**
+    * Show All patch history or patch history for a specific store. 
+    * @param $type all or dav
+    * @param   $id if type is all use 0, if type is dav use davID.
+     * @Route("/filepatcher/history/{type}/{id}", name="patch_history")
+     */
+    public function historyAction($type,$id){
+        $repo = $this->getDoctrine()
+                        ->getRepository("FilePatchBundle:History");
+        
+
+                if($type == "all"){
+                   $query = $repo->createQueryBuilder('t')
+                   ->select('t.id','t.success','t.davId','t.patchId','t.dateExecuted',"t.originalContent","t.newContent","t.original_file_name","t.save_as_name","t.action","t.success") 
+                   ->orderBy("t.dateExecuted","DESC")
+                   ->getQuery(); 
+                   }
+                   elseif($type == "dav"){
+                    $query = $repo->createQueryBuilder('t')
+                   ->select('t.id','t.success','t.davId','t.patchId','t.dateExecuted',"t.originalContent","t.newContent","t.original_file_name","t.save_as_name","t.action","t.success") 
+                   ->where("t.davId = '$id'")
+                   ->orderBy("t.dateExecuted","DESC")
+                   ->getQuery();
+                   }
+
+                   $history = $query->getResult();
+              
+        foreach ($history as $key => $event) {
+           $patch =  $this->getDoctrine() ->getRepository("FilePatchBundle:Patch") ->find($event['patchId']);
+           $dav =  $this->getDoctrine() ->getRepository("FilePatchBundle:Dav") ->find($event['davId']);
+            $history[$key]['patchName'] = $patch->getName();
+            $history[$key]['store'] = $dav->getStore();
+           
+        }
+
+        return $this->render('FilePatchBundle:Default:history.html.twig', 
+            array('history'=> $history)
+            );
+    } 
+
+    /**
+     * Undo a patch 
+     * @param   $id patch history id
+     * @Route("/filepatcher/revert/{id}", name="patch_revert")
+     */
+    public function revertAction($id){
+        $em = $this->getDoctrine()->getManager();
+        $details = $em->getRepository("FilePatchBundle:History")->find($id);
+        $davId = $details->getDavId();
+        $revertContent = $details->getOriginalContent();
+        $revertFile = $details->getOriginalFileName();
+        $davClient = $em->getRepository("FilePatchBundle:Dav")->find($davId);
+        $dav = new Dav;
+        $f = fopen($dav->downloadDirectory.$revertFile,"w");
+        fwrite($f,$revertContent);
+        fclose($f);
+        $dav->davUpload($davClient,$revertFile);
+        unlink($dav->downloadDirectory.$revertFile);
+
+            $this->addFlash(
+                'notice',
+                "Patch has been reverted"
+                );
+            return $this->redirectToRoute("patch_history",array("type" => "all","id" => 0));
+    } 
+
+    /**
+     * Show the details of the results of a previous patch event.
+     * @param   $id patch history id
+     * @Route("/filepatcher/history-details/{id}", name="patch_details")
+     */
+    public function historyDetialAction($id){
+        $em = $this->getDoctrine()->getManager();
+        $details = $em->getRepository("FilePatchBundle:History")->find($id);
+        $details->NAME = $details->getOriginalFileName();
+        $details->fancyNew = $details->getNewContent();
+        $details->fancyOld = $details->getOriginalContent();
+        return $this->render('FilePatchBundle:Default:historyDetails.html.twig', array('detail'=> $details));
+    } 
+
+}
+

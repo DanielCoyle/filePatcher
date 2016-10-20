@@ -1,0 +1,8 @@
+file_patch:
+    resource: "@FilePatchBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation

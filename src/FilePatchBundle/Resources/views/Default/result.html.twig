@@ -1,0 +1,27 @@
+{% extends 'FilePatchBundle:Default:index.html.twig' %}
+{% block body %}
+<h2>Results</h2>
+<table class='table table-striped'>
+<tr>
+<td>Store</td>
+<td>Status</td>
+<td>Action</td>
+<td>File In Dav's Name</td>
+<td></td>
+</tr>
+{% for event in history %}
+<tr>
+<td><strong>{{event.store}}</strong></td>
+<td>
+{% if event.success == true %}
+<div class='alert alert-success'>Success</div>
+{% else %}
+<div class='alert alert-danger'>Fail: {{event.message}}</div>
+{% endif %}
+</td>
+<td>{{event.action}}</td>
+<td>{{event.save_as_name}}</td>
+<td><a href='{{path('patch_revert',{"id":event.id})}}' class='btn btn-danger'>Revert</a></td>
+</tr>
+{% endfor %}
+{% endblock %}

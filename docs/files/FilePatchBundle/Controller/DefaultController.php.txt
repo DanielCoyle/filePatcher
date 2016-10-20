@@ -1,0 +1,32 @@
+<?php
+
+namespace FilePatchBundle\Controller;
+use FilePatchBundle\Entity\Patch;
+
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+
+/**
+ * Contains a single indexAction that routes to the home page
+ */
+class DefaultController extends Controller
+{
+   /**
+     * @Route("/", name="patch_list")
+     */
+	public function indexAction(){
+        return $this->render('FilePatchBundle:Default:index.html.twig');
+    } 
+
+
+
+}
+

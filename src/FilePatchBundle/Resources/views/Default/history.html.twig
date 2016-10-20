@@ -1,0 +1,40 @@
+{% extends 'FilePatchBundle:Default:index.html.twig' %}
+{% block title %}File Patch History{% endblock %}
+{% block body %}
+<table class='table table-striped'>
+<thead>
+<tr>
+<td>Status</td>
+<td>Store</td>
+<td>Patch</td>
+<td>dateExecuted</td>
+<td>save_as_name</td>
+<td>action</td>
+</tr>
+</thead>
+<tbody>
+{% for event in history %}
+<tr>
+<td>
+{% if event.success == true %}
+<div class='alert alert-success'>Success</div>
+{% else %}
+<div class='alert alert-danger'>Fail</div>
+{% endif %}
+</td>
+<td>{{event.store}}</td>
+<td>{{event.patchName}}</td>
+<td>{{event.dateExecuted|date("m/d/Y H:i:s")}}</td>
+<td>{{event.save_as_name}}</td>
+<td>{{event.action}}</td>
+<td><a href='{{path('patch_details',{"id":event.id})}}'><span class='btn btn-info revert'><i class="fa fa-eye" aria-hidden="true"></i> View Details</span></a></td>
+<td>
+{% if event.success == true %}
+<a href='{{path('patch_revert',{"id":event.id})}}'><span class='btn btn-danger revert'><i class="fa fa-repeat" aria-hidden="true"></i> Revert</span></a>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'FilePatchBundle:Default:index.html.twig' %}
+{% block title %}WebDav List{% endblock %}
+{% block body %}
+<a href='http://coyle.intuitsolutions-apps.net/sandbox/web/app_dev.php/dav/new'><span class='btn btn-success'><i class="fa fa-plus-circle" aria-hidden="true"></i> New WebDav Record</span></a>
+<div style='margin-top:10px;'>
+<label for='search'>Search: </label><input type='text' id='search' name='search'>
+</div>
+<table class='table table-striped'>
+<thead>
+<tr>
+<td>Store</td>
+<td>Dav URL</td>
+<td>&nbsp;</td>
+<tr>
+</thead>
+<tbody>
+{% for dav in davs %}
+<tr>
+<td>{{dav.store}}</td>
+<td>{{dav.davUrl}}</td>
+<td><a href='http://coyle.intuitsolutions-apps.net/sandbox/web/app_dev.php/dav/edit/{{dav.id}}'><span class='btn btn-default edit'><i class="fa fa-pencil" aria-hidden="true"></i>EDIT</span></a>
+<a href='http://coyle.intuitsolutions-apps.net/sandbox/web/app_dev.php/filepatcher/history/dav/{{dav.id}}'><span class='btn btn-info history'><i class="fa fa-eye" aria-hidden="true"></i> View History</span></a>
+<a href='http://coyle.intuitsolutions-apps.net/sandbox/web/app_dev.php/dav/test/{{dav.id}}'><span class='btn btn-success test'><i class="fa fa-play" aria-hidden="true"></i>TEST</span></a><div class='result'><div></div></div>
+<a href='http://coyle.intuitsolutions-apps.net/sandbox/web/app_dev.php/dav/delete/{{dav.id}}'><span class='btn btn-danger delete'><i class="fa fa-trash-o" aria-hidden="true"></i> DELETE</span></a>
+</td>
+{% endfor %}
+</tbody>
+</table>
+
+
+<style>
+.result {
+    position: absolute;
+    margin: -44px 0 0 0;
+}
+
+</style>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(".result").hide();
+$(".test.btn").on("click",function(e){
+e.preventDefault();
+$(this).prop("disabled",true);
+	$(".test").css("cursor","wait");
+url = $(this).parent("a").attr("href");
+console.log(url);
+$(this).parents("td").find(".result>div").load(url+" .alert");
+	$(".test").css("cursor","default");
+$(this).parents("td").find(".result").slideDown("slow");
+setTimeout(function(){
+	$(".result").slideUp("fast");
+$(this).prop("disabled",false);
+
+},5000);
+});
+
+$(".closeResults").on("click",function(){
+	$(this).parent().slideUp("fast");
+});
+
+
+$("#search").on("input",function(){
+$("tr").hide();
+$("tr:contains('"+$(this).val()+"')").show();
+});
+</script>
+{% endblock %}

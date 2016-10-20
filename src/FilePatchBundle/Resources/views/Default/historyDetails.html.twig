@@ -1,0 +1,34 @@
+{% extends 'FilePatchBundle:Default:index.html.twig' %}
+{% block title %}Patch Event Details{% endblock %}
+{% block body %}
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<label>Status:</label>
+{% if detail.success == true %}
+<div class='alert alert-success'>Success</div>
+{% else %}
+<div class='alert alert-danger'>Failed</div>
+{% endif %}
+<div>
+	<label>Action:</label>
+	{{detail.action}}
+</div>
+<div>
+	<label>Original File Name:</label>
+	{{detail.NAME}}
+</div>
+<div>
+<label>File saved as:</label>
+{{detail.save_as_name}}
+</div>
+<div class='col-md-6'>
+<label>Original File Contents:</label>
+	<pre><code class='html'>{{detail.fancyOld}}</code></pre> 
+</div>
+<div class='col-md-6'>
+	<label>New Content:</label>
+	<pre><code class='html'>{{detail.fancyNew}}</code></pre> 
+</div>
+
+{% endblock %}

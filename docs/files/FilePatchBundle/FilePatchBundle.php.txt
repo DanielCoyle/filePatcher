@@ -1,0 +1,10 @@
+<?php
+
+namespace FilePatchBundle;
+
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+
+class FilePatchBundle extends Bundle
+{
+}
+

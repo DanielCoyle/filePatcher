@@ -1,0 +1,74 @@
+{% extends 'FilePatchBundle:Default:index.html.twig' %}
+{% block title %}New Patch{% endblock %}
+{% block body %}
+<a href='http://coyle.intuitsolutions-apps.net/sandbox/web/app_dev.php/filepatcher/'>Go Back</a>
+<h2>New Patch</h2>
+{{form_start(form)}}
+{{form_widget(form)}}
+{{form_end(form)}}
+{% endblock %}
+{% block scripts %}
+<script>
+$("#form>div:contains('Action')").after("<div class='message alert alert-info' style='display:none'></div> ");
+$("#form_action").on("change",function(){
+$("#form>div").hide();
+$("#form>div:contains('Name')").show();
+$("#form>div:contains('Description')").show();
+$("#form>div:contains('Action')").show();
+$("#form>div:contains('Submit')").show();
+if($(this).val() == ""){
+
+ }
+else if($(this).val() == "createNewFile"){
+	$("div.message").show();
+	$("#form>div:contains('Save as')").show();
+	$("#form_new_content").parents("div").show();
+	$(".message").text("Please give your new file a name and some content");
+	$("[for='form_existing_content']").hide();
+ 		$("[for='form_new_content']").text("New File Contents");
+ }
+ 
+ else{
+	$("[for='form_existing_content']").show();
+ 	$("#form_file_name").parent("div").show();
+	$("#form_existing_content").parent("div").show();
+	$("#form_new_content").parent("div").show();
+
+ 	if($(this).val() == "replaceString"){
+ 	$(".message").text("Find a string in the file and replace it with new text");
+ 		$("[for='form_existing_content']").text("Text to Be Replaced");
+ 		$("[for='form_new_content']").text("Replacement Text");
+ 	}
+ 	if($(this).val() == "insertBefore"){
+ 	$(".message").text("Find a string in the file and adds new text before the found string");
+ 		$("[for='form_existing_content']").text("Text string");
+ 		$("[for='form_new_content']").text("New text that will be added before the text above:");
+ 	}
+	if($(this).val() == "insertAfter"){
+ 		$(".message").text("Find a string in the file and adds new text after the found string");
+ 		$("[for='form_existing_content']").text("Text string");
+ 		$("[for='form_new_content']").text("New text that will be added after the text above:");
+ 	}
+	 if($(this).val() == "append"){
+ 		$(".message").text("Adds new text to the bottom of a file");
+
+		$("#form_existing_content").parent("div").hide();
+ 		$("[for='form_existing_content']").text("Text string");
+ 		$("[for='form_new_content']").text("New text that will be added to the end of the file");
+ 	} 
+ 	if($(this).val() == "prepend"){
+	 	$(".message").text("Adds new text to the top of a file");
+		$("#form_existing_content").parent("div").hide();
+ 		$("[for='form_new_content']").text("New text that will be added to the begining of the file");
+ 	}
+
+
+	$("div.message").show();
+ }
+
+});
+$("#form_action").change();
+
+</script>
+
+{% endblock %}

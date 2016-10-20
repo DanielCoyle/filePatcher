@@ -1,0 +1,107 @@
+{% extends 'FilePatchBundle:Default:index.html.twig' %}
+{% block title %}Execute File Patch{% endblock %}
+{% block body %}
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#home">Patch</a></li>
+  <li><a data-toggle="tab" href="#menu1">History</a></li>
+</ul>
+<div class="tab-content">
+<div id="home" class="tab-pane fade in active">
+<h2>Execute File Patch: {{patch.name}}</h2>
+<h4>Description</h4>
+<div class='row'>
+<div class='col-md-10 description'>
+{{patch.description}}
+<div class='action'><strong>Action:</strong> {{patch.action}}</div>
+<div class='fileName'><strong>File Name:</strong> {{patch.fileName}}</div>
+<div class='saveAs'><strong>File Name (Save As):</strong> {{patch.saveAs}}</div>
+</div>
+<div class='col-md-2'>
+<a href='{{path('patch_edit',{'id':patch.id})}}'><span class='btn btn-primary'>Edit Patch</span></a>
+</div>
+</div>
+<hr>
+<div class='alert alert-info'>Please choose which stores to apply this patch to</div>
+<div class='alert alert-info'>The <strong style='color:#2fa2c5;'>Blue</strong> stores have already been patched.</div>
+{{form_start(form)}}
+<p class='box'><label><input type="checkbox" id="checkAll"/> Check all</label></p>
+<p class='box'><label>Search:</label> <input type="text" id="checkQ"/></p>
+{{form_widget(form)}}
+{{form_end(form)}}
+</div>
+<div id="menu1" class="tab-pane fade">
+<h2>Patch History</h2>
+<table class='table table-striped'>
+<tbody>
+{% for event in history %}
+<tr>
+<td>{{event.store}}</td>
+<td>
+{% if event.success == true %}
+<div class='alert alert-success'>Success</div>
+{% else %}
+<div class='alert alert-danger'>Fail</div>
+{% endif %}
+</td>
+<td>{{event.dateExecuted|date("m/d/Y H:i:s")}}</td>
+<td><a href='{{path('patch_details',{'id':event.id})}}'><span class='btn btn-default'>View Details</span></a>
+<a href='{{path('patch_revert',{'id':event.id})}}'><span class='btn btn-danger'>Revert</span></a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<style>
+label{
+	margin-right:15px;
+}
+div#form label[for^=form_store] {
+    width: 206px;
+    border: solid 1px lightgray;
+    padding: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+.completedPatch{
+	color:#2fa2c5;
+}
+
+.executePatch {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$("#checkAll").change(function () {
+    $("input:checkbox").prop('checked', $(this).prop("checked"));
+});
+$(".box").prependTo("#form_store");
+
+$("#checkQ").on("input",function(){
+$("label").hide();
+$(this).prev("label").show();
+$("input:checkbox").hide();
+$("label:contains('"+$(this).val()+"')").show();
+$("label:contains('"+$(this).val()+"')").each(function(){
+$(this).prev("input:checkbox").show();
+});
+$("#checkAll").show();
+});
+
+$("label").each(function(){
+check = $(this).text();
+console.log(check+"\n");
+if($("table").html().indexOf(check) > 0){
+$(this).addClass("completedPatch");
+}
+else{
+$(this).css("color","black");
+}
+});
+
+</script>
+{% endblock %}

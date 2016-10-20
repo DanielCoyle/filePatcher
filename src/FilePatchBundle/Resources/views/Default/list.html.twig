@@ -1,0 +1,23 @@
+{% extends 'FilePatchBundle:Default:index.html.twig' %}
+{% block title %}File Patches{% endblock %}
+{% block body %}
+<a href='{{path('patch_new')}}'><span class='btn btn-success'><i class="fa fa-plus-circle" aria-hidden="true"></i> New File Patch</span></a>
+<table class='table table-striped'>
+<thead>
+<tr>
+<td>Patch Name</td>
+<td>Patch Description</td>
+<td>&nbsp;</td>
+<tr>
+</thead>
+{% for patch in patches %}
+<tr>
+<td>{{patch.name}}</td>
+<td>{{patch.description}}</td>
+<td><a href='{{path('patch_edit',{'id': patch.id})}}'><span class='btn btn-default edit'><i class="fa fa-pencil" aria-hidden="true"></i> Edit</span></a>
+<a href='{{path('patch_execute',{'id': patch.id})}}'><span class='btn btn-info'><i class="fa fa-eye" aria-hidden="true"></i> View Details / Execute</span></a>
+<a href='{{path('patch_delete',{'id': patch.id})}}'><span class='btn btn-danger delete'><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</span></a></td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

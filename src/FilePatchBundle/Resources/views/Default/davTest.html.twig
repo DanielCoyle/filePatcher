@@ -1,0 +1,10 @@
+{% extends 'FilePatchBundle:Default:index.html.twig' %}
+{% block title %}Dav Test{% endblock %}
+{% block body %}
+{% if content.success == 1 %}
+<div class='alert alert-success'>The WebDAV credentials are working properly.</div>
+{% else %}
+<div class='alert alert-warning'>{{content.message}}</div>
+{% endif %}
+<a href='{{path('dav_list')}}'>Back to WebDav Listings</a>
+{% endblock %}
